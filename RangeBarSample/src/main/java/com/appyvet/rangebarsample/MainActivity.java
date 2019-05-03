@@ -2,8 +2,10 @@
 package com.appyvet.rangebarsample;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -11,7 +13,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -19,10 +20,6 @@ import android.widget.TextView;
 import com.appyvet.materialrangebar.RangeBar;
 import com.appyvet.rangebarsample.colorpicker.ColorPickerDialog;
 import com.appyvet.rangebarsample.colorpicker.Utils;
-
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class MainActivity extends Activity implements
         ColorPickerDialog.OnColorSelectedListener {
@@ -80,8 +77,6 @@ public class MainActivity extends Activity implements
         final TextView pinTextColor = (TextView) findViewById(R.id.textColor);
         final TextView tickColor = (TextView) findViewById(R.id.tickColor);
         final TextView selectorColor = (TextView) findViewById(R.id.selectorColor);
-        final TextView indexButton = (TextView) findViewById(R.id.setIndex);
-        final TextView valueButton = (TextView) findViewById(R.id.setValue);
         final TextView rangeButton = (TextView) findViewById(R.id.enableRange);
         final TextView disabledButton = (TextView) findViewById(R.id.disable);
         final TextView tickBottomLabelsButton = (TextView) findViewById(R.id.toggleTickBottomLabels);
@@ -89,13 +84,14 @@ public class MainActivity extends Activity implements
         final TextView tickLabelColor = (TextView) findViewById(R.id.tickLabelColor);
         final TextView tickLabelSelectedColor = (TextView) findViewById(R.id.tickLabelSelectColor);
 
-        //Sets the buttons to bold.
-//        barColor.setTypeface(font, Typeface.BOLD);
-//        connectingLineColor.setTypeface(font, Typeface.BOLD);
-//        pinColor.setTypeface(font, Typeface.BOLD);
+        final TextView tvLeftIndex = findViewById(R.id.tvLeftIndex);
+        final TextView tvRightIndex = findViewById(R.id.tvRightIndex);
+        final TextView tvLeftValue = findViewById(R.id.tvLeftValue);
+        final TextView tvRightValue = findViewById(R.id.tvRightValue);
+
 
         // Gets the RangeBar
-        rangebar = (RangeBar) findViewById(R.id.rangebar1);
+        rangebar = findViewById(R.id.rangebar1);
 
         rangeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,19 +106,17 @@ public class MainActivity extends Activity implements
             }
         });
 
-        // Setting Index Values -------------------------------
-
-        // Gets the index value TextViews
-        final EditText leftIndexValue = (EditText) findViewById(R.id.leftIndexValue);
-        final EditText rightIndexValue = (EditText) findViewById(R.id.rightIndexValue);
-
         // Sets the display values of the indices
         rangebar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
             @Override
             public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex,
                                               int rightPinIndex, String leftPinValue, String rightPinValue) {
-                leftIndexValue.setText("" + leftPinIndex);
-                rightIndexValue.setText("" + rightPinIndex);
+
+                tvLeftIndex.setText(String.format("Left Index %d", leftPinIndex));
+                tvRightIndex.setText(String.format("Right Index %d", rightPinIndex));
+
+                tvLeftValue.setText(String.format("Left Value %s", leftPinValue));
+                tvRightValue.setText(String.format("Right Value %s", rightPinValue));
             }
 
             @Override
@@ -133,48 +127,6 @@ public class MainActivity extends Activity implements
             @Override
             public void onTouchStarted(RangeBar rangeBar) {
                 Log.d("RangeBar", "Touch started");
-            }
-        });
-
-        // Sets the indices themselves upon input from the user
-        indexButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                // Gets the String values of all the texts
-                String leftIndex = leftIndexValue.getText().toString();
-                String rightIndex = rightIndexValue.getText().toString();
-
-                // Catches any IllegalArgumentExceptions; if fails, should throw
-                // a dialog warning the user
-                try {
-                    if (!leftIndex.isEmpty() && !rightIndex.isEmpty()) {
-                        int leftIntIndex = Integer.parseInt(leftIndex);
-                        int rightIntIndex = Integer.parseInt(rightIndex);
-                        rangebar.setRangePinsByIndices(leftIntIndex, rightIntIndex);
-                    }
-                } catch (IllegalArgumentException e) {
-                }
-            }
-        });
-
-        // Sets the indices by values based upon input from the user
-        valueButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                // Gets the String values of all the texts
-                String leftValue = leftIndexValue.getText().toString();
-                String rightValue = rightIndexValue.getText().toString();
-
-                // Catches any IllegalArgumentExceptions; if fails, should throw
-                // a dialog warning the user
-                try {
-                    if (!leftValue.isEmpty() && !rightValue.isEmpty()) {
-                        float leftIntIndex = Float.parseFloat(leftValue);
-                        float rightIntIndex = Float.parseFloat(rightValue);
-                        rangebar.setRangePinsByValue(leftIntIndex, rightIntIndex);
-                    }
-                } catch (IllegalArgumentException e) {
-                }
             }
         });
 
@@ -225,16 +177,16 @@ public class MainActivity extends Activity implements
         });
 
         // Sets tickInterval
-        final TextView tickInterval = (TextView) findViewById(R.id.tickInterval);
-        SeekBar tickIntervalSeek = (SeekBar) findViewById(R.id.tickIntervalSeek);
+        final TextView tickInterval = findViewById(R.id.tickInterval);
+        SeekBar tickIntervalSeek = findViewById(R.id.tickIntervalSeek);
         tickIntervalSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar tickCountSeek, int progress, boolean fromUser) {
                 try {
-                    rangebar.setTickInterval(progress / 10.0f);
+                    rangebar.setTickInterval(progress);
                 } catch (IllegalArgumentException e) {
                 }
-                tickInterval.setText("tickInterval = " + progress / 10.0f);
+                tickInterval.setText("tickInterval = " + progress);
             }
 
             @Override
@@ -253,8 +205,8 @@ public class MainActivity extends Activity implements
 
             @Override
             public void onProgressChanged(SeekBar barWeightSeek, int progress, boolean fromUser) {
-                rangebar.setBarWeight(getValueInDP(progress));
-                barWeight.setText("barWeight = " + progress);
+                rangebar.setBarWeight(convertDpToPixel(progress, MainActivity.this));
+                barWeight.setText(String.format("barWeight = %ddp", progress));
             }
 
             @Override
@@ -273,8 +225,8 @@ public class MainActivity extends Activity implements
             @Override
             public void onProgressChanged(SeekBar connectingLineWeightSeek, int progress,
                                           boolean fromUser) {
-                rangebar.setConnectingLineWeight(getValueInDP(progress));
-                connectingLineWeight.setText("connectingLineWeight = " + progress);
+                rangebar.setConnectingLineWeight(convertDpToPixel(progress, MainActivity.this));
+                connectingLineWeight.setText(String.format("connectingLineWeight = %ddp", progress));
             }
 
             @Override
@@ -286,14 +238,15 @@ public class MainActivity extends Activity implements
             }
         });
 
-        // Sets selector boundary thumb radius
+        // Sets selector radius
         final TextView thumbRadius = (TextView) findViewById(R.id.thumbRadius);
         SeekBar thumbRadiusSeek = (SeekBar) findViewById(R.id.thumbRadiusSeek);
         thumbRadiusSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar thumbRadiusSeek, int progress, boolean fromUser) {
-                rangebar.setPinRadius(getValueInDP(progress));
-                thumbRadius.setText("Pin Radius = " + progress);
+                rangebar.setPinRadius(convertDpToPixel(progress, MainActivity.this));
+                thumbRadius.setText(String.format("Pin Size = %ddp", progress));
+
             }
 
             @Override
@@ -305,15 +258,15 @@ public class MainActivity extends Activity implements
             }
         });
 
-        // Sets selector boundary thumb Radius
+        // Sets selector boundary Radius
         final TextView thumbBoundarySize = (TextView) findViewById(R.id.thumbBoundarySize);
         SeekBar thumbBoundarySeek = (SeekBar) findViewById(R.id.thumbBoundarySeek);
         thumbBoundarySeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar thumbRadiusSeek, int progress, boolean fromUser) {
 
-                rangebar.setSelectorBoundarySize(getValueInDP(progress));
-                thumbBoundarySize.setText("Selector Boundary Size = " + progress);
+                rangebar.setSelectorBoundarySize(convertDpToPixel(progress, MainActivity.this));
+                thumbBoundarySize.setText(String.format("Selector Boundary Size = %ddp", progress));
             }
 
             @Override
@@ -438,13 +391,6 @@ public class MainActivity extends Activity implements
 
     }
 
-    private int getValueInDP(int value) {
-        int valueInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                value,
-                getResources().getDisplayMetrics());
-        return valueInDp;
-    }
-
     /**
      * Sets the changed color using the ColorPickerDialog.
      *
@@ -543,5 +489,27 @@ public class MainActivity extends Activity implements
                         initialColor, 4, ColorPickerDialog.SIZE_SMALL, component);
         colorPicker.setOnColorSelectedListener(this);
         colorPicker.show(getFragmentManager(), "color");
+    }
+
+    /**
+     * This method converts dp unit to equivalent pixels, depending on device density.
+     *
+     * @param dp      A value in dp (density independent pixels) unit. Which we need to convert into pixels
+     * @param context Context to get resources and device specific display metrics
+     * @return A float value to represent px equivalent to dp depending on device density
+     */
+    public static int convertDpToPixel(int dp, Context context) {
+        return (int) (dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+    /**
+     * This method converts device specific pixels to density independent pixels.
+     *
+     * @param px      A value in px (pixels) unit. Which we need to convert into db
+     * @param context Context to get resources and device specific display metrics
+     * @return A float value to represent dp equivalent to px value
+     */
+    public static int convertPixelsToDp(int px, Context context) {
+        return (int) (px / ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 }

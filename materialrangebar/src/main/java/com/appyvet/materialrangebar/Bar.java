@@ -117,16 +117,16 @@ public class Bar {
     /**
      * Bar constructor
      *
-     * @param ctx          the context
-     * @param x            the start x co-ordinate
-     * @param y            the y co-ordinate
-     * @param length       the length of the bar in px
-     * @param tickCount    the number of ticks on the bar
-     * @param tickHeight   the height of each tick
-     * @param tickDefaultColor    the color of all ticks
-     * @param barWeight    the weight of the bar
-     * @param barColor     the color of the bar
-     * @param isBarRounded if the bar has rounded edges or not
+     * @param ctx              the context
+     * @param x                the start x co-ordinate
+     * @param y                the y co-ordinate
+     * @param length           the length of the bar in px
+     * @param tickCount        the number of ticks on the bar
+     * @param tickHeight       the height of each tick
+     * @param tickDefaultColor the color of all ticks
+     * @param barWeight        the weight of the bar
+     * @param barColor         the color of the bar
+     * @param isBarRounded     if the bar has rounded edges or not
      */
     public Bar(Context ctx,
                float x,
@@ -238,7 +238,7 @@ public class Bar {
      * @param length           the length of the bar in px
      * @param tickCount        the number of ticks on the bar
      * @param tickHeight       the height of each tick
-     * @param tickDefaultColor        defualt tick color
+     * @param tickDefaultColor defualt tick color
      * @param tickColors       the colors of each tick
      * @param barWeight        the weight of the bar
      * @param barColor         the color of the bar
@@ -414,7 +414,7 @@ public class Bar {
 
         Rect labelBounds = new Rect();
         mLabelPaint.getTextBounds(label, 0, label.length(), labelBounds);
-        float xPos = x - labelBounds.width()/2;
+        float xPos = x - labelBounds.width() / 2;
 
         if (first) {
             xPos += mTickHeight;
@@ -422,10 +422,10 @@ public class Bar {
             xPos -= mTickHeight;
         }
 
-        boolean isSelected = rightThumb.isInTargetZone(x, mY);
+        boolean isSelected = rightThumb.getX() == x;
 
         if (!isSelected && leftThumb != null) {
-            isSelected = leftThumb.isInTargetZone(x, mY);
+            isSelected = leftThumb.getX() == x;
         }
 
         if (isSelected) {
