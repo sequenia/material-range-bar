@@ -16,6 +16,7 @@ Developers can customize the following attributes (both via XML and programatica
 
 ### Change Log
 ```
+1.4.6 - Added tick colors, Added Left,Right and Default Selector Color. Added Touch Started /Touch Ended events to Rangebar. Fixed rangebar so that it behaves correctly inside scrollview. Also fixed Selected Tick label color issue.
 1.4.5 - Added TOP and BOTTOM tick labels properties and drag only option. Also updated Gradle and screenshots.
 1.4.4 - Added List of colors for connecting line and fix pins invisibility issue.
 1.4.3 - Fixes an issue where you user was able to drag a thumb outside of the valid range of Rangebar.
@@ -84,11 +85,6 @@ mrb_selectorBoundaryColor | reference or color
 mrb_selectorBoundarySize | dimension
 ```
 
-### Via runtime only (no XML option)
-```
-pin indices (the location of the thumbs on the RangeBar)
-```
-
 ![ScreenShot](https://github.com/oli107/material-range-bar/blob/master/Screenshots/screenshot.png)
 
 
@@ -99,81 +95,104 @@ Examples
 
 This is a rangebar with both a lower and upper value
 ```xml
-    <com.appyvet.materialrangebar.RangeBar
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    <com.appyvet.materialrangebar.RangeBar xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/rangebar1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
+        app:mrb_barWeight="2dp"
+        app:mrb_connectingLineColors="@array/connecting_colors"
+        app:mrb_connectingLineWeight="4dp"
+        app:mrb_leftSelectorColor="#FFB300"
+        app:mrb_pinColor="#6c3f6a"
         app:mrb_pinMaxFont="15sp"
         app:mrb_pinMinFont="12sp"
+        app:mrb_pinRadius="14dp"
+        app:mrb_pinTextColor="@color/white"
+        app:mrb_rangeBar="true"
         app:mrb_rangeBarPaddingBottom="30dp"
+        app:mrb_rangeBar_rounded="true"
+        app:mrb_rightSelectorColor="#1E88E5"
         app:mrb_selectorBoundaryColor="@color/accent"
         app:mrb_selectorBoundarySize="2dp"
-        app:mrb_pinTextColor="@color/white"
-        app:mrb_temporaryPins="true"
         app:mrb_selectorSize="10dp"
+        app:mrb_temporaryPins="true"
+        app:mrb_tickBottomLabels="@array/ticks_labels"
+        app:mrb_tickColors="@array/tick_colors"
+        app:mrb_tickDefaultColor="@color/indigo500"
+        app:mrb_tickDefaultLabel="label"
+        app:mrb_tickEnd="10"
+        app:mrb_tickHeight="4dp"
+        app:mrb_tickInterval="1"
         app:mrb_tickLabelColor="@color/indigo500"
         app:mrb_tickLabelSelectedColor="@color/accent"
-        app:mrb_tickBottomLabels="@array/ticks_labels"
-        app:mrb_tickTopLabels="@array/ticks_labels"
-        app:mrb_tickDefaultLabel="label"
         app:mrb_tickLabelSize="4sp"
-        app:mrb_tickEnd="10"
-        app:mrb_tickInterval="1"
-        app:mrb_tickStart="5"
-        app:mrb_tickHeight="4dp"
-        app:mrb_pinRadius="14dp"
-        app:mrb_rangeBar_rounded="true"
-        app:mrb_connectingLineColors="@array/connecting_colors"
-        app:mrb_rangeBar="true"
-        app:mrb_pinColor="#6c3f6a"/>
+        app:mrb_tickStart="1"
+        app:mrb_tickTopLabels="@array/ticks_labels" />
+
 ```
 
 This is a seekbar with only a single pin (note mrb_rangeBar=false)
 ```xml
-    <com.appyvet.materialrangebar.RangeBar
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    <com.appyvet.materialrangebar.RangeBar xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/rangebar1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
+        app:mrb_barWeight="2dp"
+        app:mrb_connectingLineColors="@array/connecting_colors"
+        app:mrb_connectingLineWeight="4dp"
+        app:mrb_leftSelectorColor="#FFB300"
+        app:mrb_pinColor="#6c3f6a"
         app:mrb_pinMaxFont="15sp"
         app:mrb_pinMinFont="12sp"
+        app:mrb_pinRadius="14dp"
+        app:mrb_pinTextColor="@color/white"
+        app:mrb_rangeBar="false"
         app:mrb_rangeBarPaddingBottom="30dp"
+        app:mrb_rangeBar_rounded="true"
+        app:mrb_rightSelectorColor="#1E88E5"
         app:mrb_selectorBoundaryColor="@color/accent"
         app:mrb_selectorBoundarySize="2dp"
-        app:mrb_pinTextColor="@color/white"
-        app:mrb_temporaryPins="true"
         app:mrb_selectorSize="10dp"
+        app:mrb_temporaryPins="true"
+        app:mrb_tickBottomLabels="@array/ticks_labels"
+        app:mrb_tickColors="@array/tick_colors"
+        app:mrb_tickDefaultColor="@color/indigo500"
+        app:mrb_tickDefaultLabel="label"
+        app:mrb_tickEnd="10"
+        app:mrb_tickHeight="4dp"
+        app:mrb_tickInterval="1"
         app:mrb_tickLabelColor="@color/indigo500"
         app:mrb_tickLabelSelectedColor="@color/accent"
-        app:mrb_tickBottomLabels="@array/ticks_labels"
-        app:mrb_tickTopLabels="@array/ticks_labels"
-        app:mrb_tickDefaultLabel="label"
         app:mrb_tickLabelSize="4sp"
-        app:mrb_tickEnd="10"
-        app:mrb_tickInterval="1"
-        app:mrb_tickStart="5"
-        app:mrb_tickHeight="4dp"
-        app:mrb_pinRadius="14dp"
-        app:mrb_rangeBar_rounded="true"
-        app:mrb_connectingLineColors="@array/connecting_colors"
-        app:mrb_rangeBar="false"
-        app:mrb_pinColor="#6c3f6a"/>
+        app:mrb_tickStart="1"
+        app:mrb_tickTopLabels="@array/ticks_labels" />
+
 ```
 
 ## Adding a rangebar listener
 - Add a listener - rangeBar.setOnRangeBarChangeListener which returns left and right index as well as value.
 ```java
-rangebar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
+  rangebar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
             @Override
-            public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex,
-                                              int rightPinIndex, String leftPinValue, String rightPinValue) {
+            public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
+
             }
 
+            @Override
+            public void onTouchEnded(RangeBar rangeBar) {
+
+            }
+
+            @Override
+            public void onTouchStarted(RangeBar rangeBar) {
+
+            }
         });
 ```
 ## Adding a text formatter
@@ -193,9 +212,9 @@ rangebar.setFormatter(new IRangeBarFormatter() {
 Plan for Future
 =======
 - Better documentation.
-- Properly implement Map of strings to each value
+- Kotlin conversion
 
-Demo
+Demo (Outdated)
 =======
 [Get it from the Google Play Store](https://play.google.com/store/apps/details?id=com.appyvet.rangebarsample)
 
@@ -240,7 +259,7 @@ For Moderator Access create an issue on Github and tag oli107.
 License
 =======
 
-    Copyright 2015  AppyVet, Inc.
+    Copyright 2019  AppyVet, Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
