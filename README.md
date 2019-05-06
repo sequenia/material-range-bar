@@ -236,7 +236,7 @@ allprojects {
 
 ```groovy
 dependencies {
-    implementation 'com.appyvet:materialrangebar:1.4.5'
+    implementation 'com.appyvet:materialrangebar:1.4.6'
 }
 ```
 
@@ -244,7 +244,7 @@ dependencies {
 **if you are already using android support library inside your project and run into multiple version issues related to android support library then modify the gradle path like this**
 ```groovy
 dependencies {
-    compile ('com.appyvet:materialrangebar:1.4.5') {
+    compile ('com.appyvet:materialrangebar:1.4.6') {
             exclude module: 'support-compat'
     }
 }
