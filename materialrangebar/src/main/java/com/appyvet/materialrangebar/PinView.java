@@ -83,6 +83,8 @@ class PinView extends View {
 
     private float mCircleRadiusPx;
 
+    private float mCircleBoundaryRadiusPx;
+
     private IRangeBarFormatter formatter;
 
     private float mMinPinFont = RangeBar.DEFAULT_MIN_PIN_FONT_SP;
@@ -169,6 +171,8 @@ class PinView extends View {
             mCircleBoundaryPaint.setColor(circleBoundaryColor);
             mCircleBoundaryPaint.setStrokeWidth(circleBoundarySize);
             mCircleBoundaryPaint.setAntiAlias(true);
+
+            mCircleBoundaryRadiusPx = mCircleRadiusPx - mCircleBoundaryPaint.getStrokeWidth() / 2;
         }
 
         this.pinColor = pinColor;
@@ -268,11 +272,12 @@ class PinView extends View {
     //Draw the circle regardless of pressed state. If pin size is >0 then also draw the pin and text
     @Override
     public void draw(Canvas canvas) {
+        canvas.drawCircle(mX, mY, mCircleRadiusPx, mCirclePaint);
+
         //Draw the circle boundary only if mCircleBoundaryPaint was initialized
         if (mCircleBoundaryPaint != null)
-            canvas.drawCircle(mX, mY, mCircleRadiusPx, mCircleBoundaryPaint);
+            canvas.drawCircle(mX, mY, mCircleBoundaryRadiusPx, mCircleBoundaryPaint);
 
-        canvas.drawCircle(mX, mY, mCircleRadiusPx, mCirclePaint);
         //Draw pin if pressed
         if (mPinRadiusPx > 0 && (mHasBeenPressed || !mPinsAreTemporary)) {
             mBounds.set((int) mX - mPinRadiusPx,
