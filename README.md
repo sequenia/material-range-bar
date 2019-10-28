@@ -16,7 +16,7 @@ Developers can customize the following attributes (both via XML and programatica
 
 ### Change Log
 ```
-1.4.7 - Fixed selector bpundary cut-off issue
+1.4.7 - Fixed selector boundary cut-off issue
 1.4.6 - Added tick colors, Added Left,Right and Default Selector Color. Added Touch Started /Touch Ended events to Rangebar. Fixed rangebar so that it behaves correctly inside scrollview. Also fixed Selected Tick label color issue.
 1.4.5 - Added TOP and BOTTOM tick labels properties and drag only option. Also updated Gradle and screenshots.
 1.4.4 - Added List of colors for connecting line and fix pins invisibility issue.
