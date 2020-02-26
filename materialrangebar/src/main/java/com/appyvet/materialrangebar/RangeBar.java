@@ -70,6 +70,8 @@ public class RangeBar extends View {
 
     private static final float DEFAULT_TICK_INTERVAL = 1;
 
+    private static final float DEFAULT_MIN_DISTANCE = 0;
+
     private static final float DEFAULT_TICK_HEIGHT_DP = 1;
 
     private static final float DEFAULT_PIN_PADDING_DP = 16;
@@ -119,6 +121,8 @@ public class RangeBar extends View {
     private float mTickEnd = DEFAULT_TICK_END;
 
     private float mTickInterval = DEFAULT_TICK_INTERVAL;
+
+    private int mMinIndexDistance = 0;
 
     private float mBarWeight = DEFAULT_BAR_WEIGHT_DP;
 
@@ -259,6 +263,8 @@ public class RangeBar extends View {
             }
         }
     };
+    private float mLeftBoundX;
+    private float mRightBoundX;
 
     // Constructors ////////////////////////////////////////////////////////////
 
@@ -319,6 +325,7 @@ public class RangeBar extends View {
         bundle.putBoolean("ARE_PINS_TEMPORARY", mArePinsTemporary);
         bundle.putInt("LEFT_INDEX", mLeftIndex);
         bundle.putInt("RIGHT_INDEX", mRightIndex);
+        bundle.putInt("MIN_INDEX_DISTANCE", mMinIndexDistance);
 
         bundle.putBoolean("FIRST_SET_TICK_COUNT", mFirstSetTickCount);
 
@@ -370,6 +377,7 @@ public class RangeBar extends View {
             mLeftIndex = bundle.getInt("LEFT_INDEX");
             mRightIndex = bundle.getInt("RIGHT_INDEX");
             mFirstSetTickCount = bundle.getBoolean("FIRST_SET_TICK_COUNT");
+            mMinIndexDistance = bundle.getInt("MIN_INDEX_DISTANCE");
 
             mMinPinFont = bundle.getFloat("MIN_PIN_FONT");
             mMaxPinFont = bundle.getFloat("MAX_PIN_FONT");
@@ -1338,6 +1346,8 @@ public class RangeBar extends View {
                     .getFloat(R.styleable.RangeBar_mrb_tickEnd, DEFAULT_TICK_END);
             final float tickInterval = ta
                     .getFloat(R.styleable.RangeBar_mrb_tickInterval, DEFAULT_TICK_INTERVAL);
+            final float minDistance = ta
+                    .getFloat(R.styleable.RangeBar_mrb_minSliderDistance, DEFAULT_MIN_DISTANCE);
             int tickCount = (int) ((tickEnd - tickStart) / tickInterval) + 1;
             if (isValidTickCount(tickCount)) {
 
@@ -1349,6 +1359,7 @@ public class RangeBar extends View {
                 mTickInterval = tickInterval;
                 mLeftIndex = 0;
                 mRightIndex = mTickCount - 1;
+                setMinimumDistance(minDistance);
 
                 if (mListener != null) {
                     mListener.onRangeChangeListener(this, mLeftIndex, mRightIndex,
@@ -1657,8 +1668,8 @@ public class RangeBar extends View {
     }
 
     /**
-     * Handles a {@link android.view.MotionEvent#ACTION_UP} or
-     * {@link android.view.MotionEvent#ACTION_CANCEL} event.
+     * Handles a {@link MotionEvent#ACTION_UP} or
+     * {@link MotionEvent#ACTION_CANCEL} event.
      *
      * @param x the x-coordinate of the up action
      * @param y the y-coordinate of the up action
@@ -1708,11 +1719,21 @@ public class RangeBar extends View {
     }
 
     /**
-     * Handles a {@link android.view.MotionEvent#ACTION_MOVE} event.
+     * Handles a {@link MotionEvent#ACTION_MOVE} event.
      *
      * @param x the x-coordinate of the move event
      */
     private void onActionMove(float x) {
+        int maxIndexLeft = mRightIndex - mMinIndexDistance;
+        int minIndexRight = mLeftIndex + mMinIndexDistance;
+        mLeftBoundX = mBar.getTickX(Math.max(0, maxIndexLeft));
+        mRightBoundX = mBar.getTickX(Math.min(getTickCount() - 1, minIndexRight));
+
+        if (mRightThumb.isPressed() && x < mRightBoundX) {
+            x = mRightBoundX;
+        } else if (mLeftThumb.isPressed() && x > mLeftBoundX) {
+            x = mLeftBoundX;
+        }
 
         // Move the pressed thumb to the new x-position.
         if (mIsRangeBar && mLeftThumb.isPressed()) {
@@ -1742,10 +1763,10 @@ public class RangeBar extends View {
             newRightIndex = getTickCount() - 1;
             movePin(mRightThumb, mBar.getRightX());
         }
+
         /// end added code
         // If either of the indices have changed, update and call the listener.
         if (newLeftIndex != mLeftIndex || newRightIndex != mRightIndex) {
-
             mLeftIndex = newLeftIndex;
             mRightIndex = newRightIndex;
             if (mIsRangeBar) {
@@ -1903,6 +1924,10 @@ public class RangeBar extends View {
             p = p.getParent();
         }
         return false;
+    }
+
+    public void setMinimumDistance(float distance) {
+        mMinIndexDistance = (int) Math.ceil(distance / mTickInterval);
     }
 
     // Inner Classes ///////////////////////////////////////////////////////////
