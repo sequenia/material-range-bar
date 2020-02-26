@@ -70,7 +70,7 @@ public class RangeBar extends View {
 
     private static final float DEFAULT_TICK_INTERVAL = 1;
 
-    private static final float DEFAULT_MIN_DISTANCE = 0;
+    private static final float DEFAULT_MIN_DISTANCE = -1;
 
     private static final float DEFAULT_TICK_HEIGHT_DP = 1;
 
