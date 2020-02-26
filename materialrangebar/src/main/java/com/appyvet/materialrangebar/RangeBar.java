@@ -459,6 +459,7 @@ public class RangeBar extends View {
 
         // Initialize thumbs to the desired indices
         if (mIsRangeBar) {
+            updateThumbBounds();
             mLeftThumb.setX(marginLeft + (mLeftIndex / (float) (mTickCount - 1)) * barLength);
             mLeftThumb.setXValue(getPinValue(mLeftIndex));
         }
@@ -519,6 +520,8 @@ public class RangeBar extends View {
         if (!isEnabled()) {
             return false;
         }
+
+        updateThumbBounds();
 
         switch (event.getAction()) {
 
@@ -1684,11 +1687,18 @@ public class RangeBar extends View {
             releasePin(mRightThumb);
 
         } else if (!mOnlyOnDrag) {
-            float leftThumbXDistance = getLeftThumbXDistance(x);
-            float rightThumbXDistance = getRightThumbXDistance(x);
+            final float leftThumbXDistance = getLeftThumbXDistance(x);
+            final float rightThumbXDistance = getRightThumbXDistance(x);
+            final boolean moveLeftThumb = leftThumbXDistance < rightThumbXDistance;
+
+            if (moveLeftThumb && x > mLeftBoundX) {
+                x = mLeftBoundX;
+            } else if (!moveLeftThumb && x < mRightBoundX) {
+                x = mRightBoundX;
+            }
             //move if is rangeBar and left index is lower of right one
             //if is not range bar leftThumbXDistance is always 0
-            if (leftThumbXDistance < rightThumbXDistance && mIsRangeBar) {
+            if (moveLeftThumb && mIsRangeBar) {
                 mLeftThumb.setX(x);
                 releasePin(mLeftThumb);
             } else {
@@ -1724,11 +1734,6 @@ public class RangeBar extends View {
      * @param x the x-coordinate of the move event
      */
     private void onActionMove(float x) {
-        int maxIndexLeft = mRightIndex - mMinIndexDistance;
-        int minIndexRight = mLeftIndex + mMinIndexDistance;
-        mLeftBoundX = mBar.getTickX(Math.max(0, maxIndexLeft));
-        mRightBoundX = mBar.getTickX(Math.min(getTickCount() - 1, minIndexRight));
-
         if (mRightThumb.isPressed() && x < mRightBoundX) {
             x = mRightBoundX;
         } else if (mLeftThumb.isPressed() && x > mLeftBoundX) {
@@ -1817,7 +1822,7 @@ public class RangeBar extends View {
      */
     private void releasePin(final PinView thumb) {
 
-        final float nearestTickX = mBar.getNearestTickCoordinate(thumb);
+        float nearestTickX = mBar.getNearestTickCoordinate(thumb);
         thumb.setX(nearestTickX);
         int tickIndex = mBar.getNearestTickIndex(thumb);
         thumb.setXValue(getPinValue(tickIndex));
@@ -1910,6 +1915,16 @@ public class RangeBar extends View {
     }
 
     /**
+     * Updates the thumbs' bounds based on the minimum distance, to their right and their left respectively.
+     * */
+    private void updateThumbBounds() {
+        int maxIndexLeft = mRightIndex - mMinIndexDistance;
+        int minIndexRight = mLeftIndex + mMinIndexDistance;
+        mLeftBoundX = mBar.getTickX(Math.max(0, maxIndexLeft));
+        mRightBoundX = mBar.getTickX(Math.min(getTickCount() - 1, minIndexRight));
+    }
+
+    /**
      * This flag is useful for tracking touch events that were meant as scroll events.
      * Copied from hidden method of {@link View} isInScrollingContainer.
      *
@@ -1933,6 +1948,10 @@ public class RangeBar extends View {
      * */
     public void setMinimumThumbDistance(float distance) {
         mMinIndexDistance = (int) Math.ceil(distance / mTickInterval);
+        if (mMinIndexDistance > mTickCount - 1) {
+            Log.e(TAG, "Thumb distance greater than total range.");
+            mMinIndexDistance = mTickCount - 1;
+        }
     }
 
     // Inner Classes ///////////////////////////////////////////////////////////
