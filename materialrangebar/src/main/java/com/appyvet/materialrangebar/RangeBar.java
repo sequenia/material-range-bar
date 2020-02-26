@@ -1359,7 +1359,7 @@ public class RangeBar extends View {
                 mTickInterval = tickInterval;
                 mLeftIndex = 0;
                 mRightIndex = mTickCount - 1;
-                setMinimumDistance(minDistance);
+                setMinimumThumbDistance(minDistance);
 
                 if (mListener != null) {
                     mListener.onRangeChangeListener(this, mLeftIndex, mRightIndex,
@@ -1926,7 +1926,12 @@ public class RangeBar extends View {
         return false;
     }
 
-    public void setMinimumDistance(float distance) {
+    /**
+     * Sets the minimum desired distance between thumb values.
+     *
+     * @param distance The desired minimum distance
+     * */
+    public void setMinimumThumbDistance(float distance) {
         mMinIndexDistance = (int) Math.ceil(distance / mTickInterval);
     }
 
