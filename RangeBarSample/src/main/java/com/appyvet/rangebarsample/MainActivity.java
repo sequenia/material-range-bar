@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
@@ -83,6 +82,7 @@ public class MainActivity extends Activity implements
         final TextView tickTopLabelsButton = (TextView) findViewById(R.id.toggleTickTopLabels);
         final TextView tickLabelColor = (TextView) findViewById(R.id.tickLabelColor);
         final TextView tickLabelSelectedColor = (TextView) findViewById(R.id.tickLabelSelectColor);
+        final TextView toggleSwapButton = (TextView) findViewById(R.id.toggleSwap);
 
         final TextView tvLeftIndex = findViewById(R.id.tvLeftIndex);
         final TextView tvRightIndex = findViewById(R.id.tvRightIndex);
@@ -103,6 +103,13 @@ public class MainActivity extends Activity implements
             @Override
             public void onClick(View v) {
                 rangebar.setEnabled(!rangebar.isEnabled());
+            }
+        });
+
+        toggleSwapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rangebar.setDisablePinSwap(!rangebar.isDisablePinSwap());
             }
         });
 

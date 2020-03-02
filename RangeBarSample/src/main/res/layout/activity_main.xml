@@ -423,6 +423,15 @@
                         style="@style/button"
                         android:text="@string/selectorBoundaryColor" />
                 </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView style="@style/button_holder">
+
+                    <TextView
+                        android:id="@+id/toggleSwap"
+                        style="@style/button"
+                        android:text="@string/togglePinSwapLabel" />
+                </androidx.cardview.widget.CardView>
+
             </LinearLayout>
 
             <LinearLayout
