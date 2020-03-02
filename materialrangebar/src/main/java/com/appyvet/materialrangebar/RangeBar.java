@@ -245,9 +245,13 @@ public class RangeBar extends View {
 
     private boolean mOnlyOnDrag = false;
 
+    private boolean mDisablePinSwap = false;
+
     private boolean mDragging = false;
 
     private boolean mIsInScrollingContainer = false;
+
+    private boolean ignoreDisableSwap = false;
 
     private PinTextFormatter mPinTextFormatter = new PinTextFormatter() {
         @Override
@@ -825,6 +829,22 @@ public class RangeBar extends View {
     public void setRangeBarEnabled(boolean isRangeBar) {
         mIsRangeBar = isRangeBar;
         invalidate();
+    }
+
+    /**
+     * Set if the pins are allowed to swap when dragging over each other on range bar.
+     *
+     * @param disablePinSwap Boolean - true Disables pin swap.
+     */
+    public void setDisablePinSwap(boolean disablePinSwap) {
+        mDisablePinSwap = disablePinSwap;
+    }
+
+    /**
+     * Return if pin swap is disabled.
+     */
+    public boolean isDisablePinSwap() {
+        return mDisablePinSwap;
     }
 
 
@@ -1464,6 +1484,7 @@ public class RangeBar extends View {
             mIsRangeBar = ta.getBoolean(R.styleable.RangeBar_mrb_rangeBar, true);
 
             mOnlyOnDrag = ta.getBoolean(R.styleable.RangeBar_mrb_onlyOnDrag, false);
+            mDisablePinSwap = ta.getBoolean(R.styleable.RangeBar_mrb_disablePinSwap, false);
         } finally {
             ta.recycle();
         }
@@ -1637,13 +1658,12 @@ public class RangeBar extends View {
      */
     private void onActionDown(float x, float y) {
         if (mIsRangeBar) {
-            if (!mRightThumb.isPressed() && mLeftThumb.isInTargetZone(x, y)) {
+            ignoreDisableSwap = mLeftThumb.getX() == mRightThumb.getX();
 
-                pressPin(mLeftThumb);
-
-            } else if (!mLeftThumb.isPressed() && mRightThumb.isInTargetZone(x, y)) {
-
+            if (!mLeftThumb.isPressed() && mRightThumb.isInTargetZone(x, y)) {
                 pressPin(mRightThumb);
+            } else if (!mRightThumb.isPressed() && mLeftThumb.isInTargetZone(x, y)) {
+                pressPin(mLeftThumb);
             }
         } else {
             if (mRightThumb.isInTargetZone(x, y)) {
@@ -1713,6 +1733,41 @@ public class RangeBar extends View {
      * @param x the x-coordinate of the move event
      */
     private void onActionMove(float x) {
+        boolean ignoreSwap = ignoreDisableSwap;
+        ignoreDisableSwap = false;
+
+        if (mIsRangeBar) {
+            float mLeftX = mLeftThumb.isPressed() ? x : mLeftThumb.getX();
+            float mRightX = mRightThumb.isPressed() ? x : mRightThumb.getX();
+
+            if (mDisablePinSwap && !ignoreSwap) {
+                if (mLeftThumb.isPressed() && mLeftX > mRightX) {
+                    movePin(mLeftThumb, mRightX);
+
+                    if (mListener != null) {
+                        String pinValue = getPinValue(mRightIndex);
+
+                        mListener.onRangeChangeListener(this, mRightIndex, mRightIndex,
+                                pinValue,
+                                pinValue);
+                    }
+
+                    return;
+                } else if (mRightThumb.isPressed() && mRightX < mLeftX) {
+                    movePin(mRightThumb, mLeftX);
+
+                    if (mListener != null) {
+                        String pinValue = getPinValue(mLeftIndex);
+
+                        mListener.onRangeChangeListener(this, mLeftIndex, mLeftIndex,
+                                pinValue,
+                                pinValue);
+                    }
+
+                    return;
+                }
+            }
+        }
 
         // Move the pressed thumb to the new x-position.
         if (mIsRangeBar && mLeftThumb.isPressed()) {
@@ -1722,7 +1777,7 @@ public class RangeBar extends View {
         }
 
         // If the thumbs have switched order, fix the references.
-        if (mIsRangeBar && mLeftThumb.getX() > mRightThumb.getX()) {
+        if ((!mDisablePinSwap || ignoreSwap) && mIsRangeBar && mLeftThumb.getX() > mRightThumb.getX()) {
             final PinView temp = mLeftThumb;
             mLeftThumb = mRightThumb;
             mRightThumb = temp;
@@ -1745,9 +1800,9 @@ public class RangeBar extends View {
         /// end added code
         // If either of the indices have changed, update and call the listener.
         if (newLeftIndex != mLeftIndex || newRightIndex != mRightIndex) {
-
             mLeftIndex = newLeftIndex;
             mRightIndex = newRightIndex;
+
             if (mIsRangeBar) {
                 mLeftThumb.setXValue(getPinValue(mLeftIndex));
             }
