@@ -124,6 +124,8 @@ public class RangeBar extends View {
 
     private int mMinIndexDistance = 0;
 
+    float mDesiredMinDistance = -1f;
+
     private float mBarWeight = DEFAULT_BAR_WEIGHT_DP;
 
     private boolean mIsBarRounded = false;
@@ -1362,7 +1364,7 @@ public class RangeBar extends View {
                 mTickInterval = tickInterval;
                 mLeftIndex = 0;
                 mRightIndex = mTickCount - 1;
-                setMinimumThumbDistance(minDistance);
+                mDesiredMinDistance = minDistance;
 
                 if (mListener != null) {
                     mListener.onRangeChangeListener(this, mLeftIndex, mRightIndex,
@@ -1918,6 +1920,11 @@ public class RangeBar extends View {
      * Updates the thumbs' bounds based on the minimum distance, to their right and their left respectively.
      * */
     private void updateThumbBounds() {
+        mMinIndexDistance = (int) Math.ceil(mDesiredMinDistance / mTickInterval);
+        if (mMinIndexDistance > mTickCount - 1) {
+            Log.e(TAG, "Desired thumb distance greater than total range.");
+            mMinIndexDistance = mTickCount - 1;
+        }
         int maxIndexLeft = mRightIndex - mMinIndexDistance;
         int minIndexRight = mLeftIndex + mMinIndexDistance;
         mLeftBoundX = mBar.getTickX(Math.max(0, maxIndexLeft));
@@ -1947,11 +1954,7 @@ public class RangeBar extends View {
      * @param distance The desired minimum distance
      * */
     public void setMinimumThumbDistance(float distance) {
-        mMinIndexDistance = (int) Math.ceil(distance / mTickInterval);
-        if (mMinIndexDistance > mTickCount - 1) {
-            Log.e(TAG, "Thumb distance greater than total range.");
-            mMinIndexDistance = mTickCount - 1;
-        }
+        mDesiredMinDistance = distance;
     }
 
     // Inner Classes ///////////////////////////////////////////////////////////
