@@ -79,7 +79,7 @@ mrb_temporaryPins | boolean
 
 ### Thumb Properties
 ```
-mrb_minThumbDistance | float
+mrb_minThumbDistance | float or -1 for ignoring
 mrb_thumbSize | dimension
 mrb_thumbColor | reference or color
 mrb_leftThumbColor | reference or color
