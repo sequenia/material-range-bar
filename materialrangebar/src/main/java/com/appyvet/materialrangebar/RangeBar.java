@@ -928,6 +928,19 @@ public class RangeBar extends View {
         createPins();
     }
 
+
+    /**
+     * Set the size of the selector.
+     *
+     * @param selectorSize Integer specifying the size of ticks.
+     *                             Value should be in DP
+     */
+    public void setSelectorSize(int selectorSize){
+        mCircleSize = selectorSize;
+        createPins();
+    }
+
+
     /**
      * Set the weight of the connecting line between the thumbs.
      *
