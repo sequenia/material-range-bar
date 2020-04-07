@@ -331,6 +331,10 @@ public class Bar {
         return tickIndex;
     }
 
+    public float getTickX(int tickIndex) {
+        return mLeftX + (mRightX - mLeftX) / mNumSegments * tickIndex;
+    }
+
 
     /**
      * Set the number of ticks that will appear in the RangeBar.

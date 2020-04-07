@@ -4,6 +4,7 @@
         <attr name="mrb_tickStart" format="float" />
         <attr name="mrb_tickEnd" format="float" />
         <attr name="mrb_tickInterval" format="float" />
+        <attr name="mrb_minSliderDistance" format="float"/>
         <attr name="mrb_tickHeight" format="dimension" />
         <attr name="mrb_tickDefaultColor" format="color" />
         <attr name="mrb_tickColors" format="reference" />
