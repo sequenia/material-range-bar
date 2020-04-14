@@ -12,8 +12,6 @@ Supported on API Level 12 and above for animations.
 
 ![Img](https://github.com/oli107/material-range-bar/blob/master/Screenshots/materialrangebar_demo.gif)
 
-Developers can customize the following attributes (both via XML and programatically):
-
 ### Change Log
 ```
 1.4.8 - Added mrb_minThumbDistance for specifying distances between 2 thumbs. All the selector properties are renamed to thumb.
@@ -33,6 +31,7 @@ Developers can customize the following attributes (both via XML and programatica
 0.0.1 - 0.0.7 - Initial releases.
 ```
 
+Developers can customize the following attributes (both via XML and programatically)
 ### Tick Properties
 ```
 mrb_tickStart | float
@@ -88,7 +87,7 @@ mrb_thumbBoundaryColor | reference or color
 mrb_thumbBoundarySize | dimension
 ```
 
-### Selector Properties (Replaced by Thumb Properties since version 1.4.8)
+### Selector Properties (Deprecated & Replaced by Thumb Properties since version 1.4.8)
 ```
 mrb_selectorColor | reference or color
 mrb_leftSelectorColor | reference or color
