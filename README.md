@@ -16,6 +16,7 @@ Developers can customize the following attributes (both via XML and programatica
 
 ### Change Log
 ```
+1.4.8 - Added mrb_minThumbDistance for specifying distances between 2 thumbs. All the selector properties are renamed to thumb.
 1.4.7 - Fixed selector boundary cut-off issue
 1.4.6 - Added tick colors, Added Left,Right and Default Selector Color. Added Touch Started /Touch Ended events to Rangebar. Fixed rangebar so that it behaves correctly inside scrollview. Also fixed Selected Tick label color issue.
 1.4.5 - Added TOP and BOTTOM tick labels properties and drag only option. Also updated Gradle and screenshots.
@@ -76,7 +77,18 @@ mrb_pinTextColor | reference or color
 mrb_temporaryPins | boolean
 ```
 
-### Selector Properties
+### Thumb Properties
+```
+mrb_minThumbDistance | float or -1 for ignoring
+mrb_thumbSize | dimension
+mrb_thumbColor | reference or color
+mrb_leftThumbColor | reference or color
+mrb_rightThumbColor | reference or color
+mrb_thumbBoundaryColor | reference or color
+mrb_thumbBoundarySize | dimension
+```
+
+### Selector Properties (Replaced by Thumb Properties since version 1.4.8)
 ```
 mrb_selectorColor | reference or color
 mrb_leftSelectorColor | reference or color
@@ -97,7 +109,7 @@ Examples
 This is a rangebar with both a lower and upper value
 ```xml
 
-    <com.appyvet.materialrangebar.RangeBar xmlns:app="http://schemas.android.com/apk/res-auto"
+   <com.appyvet.materialrangebar.RangeBar
         android:id="@+id/rangebar1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -106,7 +118,8 @@ This is a rangebar with both a lower and upper value
         app:mrb_barWeight="2dp"
         app:mrb_connectingLineColors="@array/connecting_colors"
         app:mrb_connectingLineWeight="4dp"
-        app:mrb_leftSelectorColor="#FFB300"
+        app:mrb_leftThumbColor="#FFB300"
+        app:mrb_minThumbDistance="-1"
         app:mrb_pinColor="#6c3f6a"
         app:mrb_pinMaxFont="15sp"
         app:mrb_pinMinFont="12sp"
@@ -115,10 +128,10 @@ This is a rangebar with both a lower and upper value
         app:mrb_rangeBar="true"
         app:mrb_rangeBarPaddingBottom="30dp"
         app:mrb_rangeBar_rounded="true"
-        app:mrb_rightSelectorColor="#1E88E5"
-        app:mrb_selectorBoundaryColor="@color/accent"
-        app:mrb_selectorBoundarySize="2dp"
-        app:mrb_selectorSize="10dp"
+        app:mrb_rightThumbColor="#1E88E5"
+        app:mrb_thumbBoundaryColor="@color/accent"
+        app:mrb_thumbBoundarySize="2dp"
+        app:mrb_thumbSize="10dp"
         app:mrb_temporaryPins="true"
         app:mrb_tickBottomLabels="@array/ticks_labels"
         app:mrb_tickColors="@array/tick_colors"
@@ -132,13 +145,12 @@ This is a rangebar with both a lower and upper value
         app:mrb_tickLabelSize="4sp"
         app:mrb_tickStart="1"
         app:mrb_tickTopLabels="@array/ticks_labels" />
-
 ```
 
 This is a seekbar with only a single pin (note mrb_rangeBar=false)
 ```xml
 
-    <com.appyvet.materialrangebar.RangeBar xmlns:app="http://schemas.android.com/apk/res-auto"
+   <com.appyvet.materialrangebar.RangeBar
         android:id="@+id/rangebar1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -147,7 +159,8 @@ This is a seekbar with only a single pin (note mrb_rangeBar=false)
         app:mrb_barWeight="2dp"
         app:mrb_connectingLineColors="@array/connecting_colors"
         app:mrb_connectingLineWeight="4dp"
-        app:mrb_leftSelectorColor="#FFB300"
+        app:mrb_leftThumbColor="#FFB300"
+        app:mrb_minThumbDistance="-1"
         app:mrb_pinColor="#6c3f6a"
         app:mrb_pinMaxFont="15sp"
         app:mrb_pinMinFont="12sp"
@@ -156,10 +169,10 @@ This is a seekbar with only a single pin (note mrb_rangeBar=false)
         app:mrb_rangeBar="false"
         app:mrb_rangeBarPaddingBottom="30dp"
         app:mrb_rangeBar_rounded="true"
-        app:mrb_rightSelectorColor="#1E88E5"
-        app:mrb_selectorBoundaryColor="@color/accent"
-        app:mrb_selectorBoundarySize="2dp"
-        app:mrb_selectorSize="10dp"
+        app:mrb_rightThumbColor="#1E88E5"
+        app:mrb_thumbBoundaryColor="@color/accent"
+        app:mrb_thumbBoundarySize="2dp"
+        app:mrb_thumbSize="10dp"
         app:mrb_temporaryPins="true"
         app:mrb_tickBottomLabels="@array/ticks_labels"
         app:mrb_tickColors="@array/tick_colors"
@@ -237,7 +250,7 @@ allprojects {
 
 ```groovy
 dependencies {
-    implementation 'com.appyvet:materialrangebar:1.4.7'
+    implementation 'com.appyvet:materialrangebar:1.4.8'
 }
 ```
 
@@ -245,7 +258,7 @@ dependencies {
 **if you are already using android support library inside your project and run into multiple version issues related to android support library then modify the gradle path like this**
 ```groovy
 dependencies {
-    compile ('com.appyvet:materialrangebar:1.4.7') {
+    compile ('com.appyvet:materialrangebar:1.4.8') {
             exclude module: 'support-compat'
     }
 }

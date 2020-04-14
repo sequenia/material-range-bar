@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
@@ -40,9 +39,9 @@ public class MainActivity extends Activity implements
     // Initializes the RangeBar in the application
     private RangeBar rangebar;
 
-    private int mSelectorColor;
+    private int mThumbColor;
 
-    private int mSelectorBoundaryColor;
+    private int mThumbBoundaryColor;
 
     private int mTickLabelColor;
 
@@ -70,19 +69,19 @@ public class MainActivity extends Activity implements
 ////        setFont(root, font);
 
         // Gets the buttons references for the buttons
-        final TextView barColor = (TextView) findViewById(R.id.barColor);
-        final TextView selectorBoundaryColor = (TextView) findViewById(R.id.selectorBoundaryColor);
-        final TextView connectingLineColor = (TextView) findViewById(R.id.connectingLineColor);
-        final TextView pinColor = (TextView) findViewById(R.id.pinColor);
-        final TextView pinTextColor = (TextView) findViewById(R.id.textColor);
-        final TextView tickColor = (TextView) findViewById(R.id.tickColor);
-        final TextView selectorColor = (TextView) findViewById(R.id.selectorColor);
-        final TextView rangeButton = (TextView) findViewById(R.id.enableRange);
-        final TextView disabledButton = (TextView) findViewById(R.id.disable);
-        final TextView tickBottomLabelsButton = (TextView) findViewById(R.id.toggleTickBottomLabels);
-        final TextView tickTopLabelsButton = (TextView) findViewById(R.id.toggleTickTopLabels);
-        final TextView tickLabelColor = (TextView) findViewById(R.id.tickLabelColor);
-        final TextView tickLabelSelectedColor = (TextView) findViewById(R.id.tickLabelSelectColor);
+        final TextView barColor = findViewById(R.id.barColor);
+        final TextView thumbBoundaryColor = findViewById(R.id.thumbBoundaryColor);
+        final TextView connectingLineColor = findViewById(R.id.connectingLineColor);
+        final TextView pinColor = findViewById(R.id.pinColor);
+        final TextView pinTextColor = findViewById(R.id.textColor);
+        final TextView tickColor = findViewById(R.id.tickColor);
+        final TextView thumbColor = findViewById(R.id.thumbColor);
+        final TextView rangeButton = findViewById(R.id.enableRange);
+        final TextView disabledButton = findViewById(R.id.disable);
+        final TextView tickBottomLabelsButton = findViewById(R.id.toggleTickBottomLabels);
+        final TextView tickTopLabelsButton = findViewById(R.id.toggleTickTopLabels);
+        final TextView tickLabelColor = findViewById(R.id.tickLabelColor);
+        final TextView tickLabelSelectedColor = findViewById(R.id.tickLabelSelectColor);
 
         final TextView tvLeftIndex = findViewById(R.id.tvLeftIndex);
         final TextView tvRightIndex = findViewById(R.id.tvRightIndex);
@@ -133,8 +132,8 @@ public class MainActivity extends Activity implements
         // Setting Number Attributes -------------------------------
 
         // Sets tickStart
-        final TextView tickStart = (TextView) findViewById(R.id.tickStart);
-        SeekBar tickStartSeek = (SeekBar) findViewById(R.id.tickStartSeek);
+        final TextView tickStart = findViewById(R.id.tickStart);
+        SeekBar tickStartSeek = findViewById(R.id.tickStartSeek);
         tickStartSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar tickCountSeek, int progress, boolean fromUser) {
@@ -155,8 +154,8 @@ public class MainActivity extends Activity implements
         });
 
         // Sets tickEnd
-        final TextView tickEnd = (TextView) findViewById(R.id.tickEnd);
-        SeekBar tickEndSeek = (SeekBar) findViewById(R.id.tickEndSeek);
+        final TextView tickEnd = findViewById(R.id.tickEnd);
+        SeekBar tickEndSeek = findViewById(R.id.tickEndSeek);
         tickEndSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar tickCountSeek, int progress, boolean fromUser) {
@@ -198,9 +197,33 @@ public class MainActivity extends Activity implements
             }
         });
 
+        // Sets Minimum Thumb Distance
+        final TextView minThumbDistance = findViewById(R.id.minThumbDistance);
+        SeekBar minThumbDistanceSeek = findViewById(R.id.minThumbDistanceSeek);
+        minThumbDistanceSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar tickCountSeek, int progress, boolean fromUser) {
+                // We want minimum value to be -1 instead of 0 (For ignoring the thumb distance) So that is why we subtract -1
+                int newProgress = progress - 1;
+                try {
+                    rangebar.setMinimumThumbDistance(newProgress);
+                } catch (IllegalArgumentException e) {
+                }
+                minThumbDistance.setText("Min Thumb Distance = " + newProgress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
         // Sets barWeight
-        final TextView barWeight = (TextView) findViewById(R.id.barWeight);
-        SeekBar barWeightSeek = (SeekBar) findViewById(R.id.barWeightSeek);
+        final TextView barWeight = findViewById(R.id.barWeight);
+        SeekBar barWeightSeek = findViewById(R.id.barWeightSeek);
         barWeightSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
             @Override
@@ -219,8 +242,8 @@ public class MainActivity extends Activity implements
         });
 
         // Sets connectingLineWeight
-        final TextView connectingLineWeight = (TextView) findViewById(R.id.connectingLineWeight);
-        SeekBar connectingLineWeightSeek = (SeekBar) findViewById(R.id.connectingLineWeightSeek);
+        final TextView connectingLineWeight = findViewById(R.id.connectingLineWeight);
+        SeekBar connectingLineWeightSeek = findViewById(R.id.connectingLineWeightSeek);
         connectingLineWeightSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar connectingLineWeightSeek, int progress,
@@ -238,14 +261,14 @@ public class MainActivity extends Activity implements
             }
         });
 
-        // Sets selector radius
-        final TextView thumbRadius = (TextView) findViewById(R.id.thumbRadius);
-        SeekBar thumbRadiusSeek = (SeekBar) findViewById(R.id.thumbRadiusSeek);
-        thumbRadiusSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        // Sets Pin radius
+        final TextView pinRadius = findViewById(R.id.pinSize);
+        SeekBar pinRadiusSeek = findViewById(R.id.pinSizeSeek);
+        pinRadiusSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar thumbRadiusSeek, int progress, boolean fromUser) {
                 rangebar.setPinRadius(convertDpToPixel(progress, MainActivity.this));
-                thumbRadius.setText(String.format("Pin Size = %ddp", progress));
+                pinRadius.setText(String.format("Pin Size = %ddp", progress));
 
             }
 
@@ -258,15 +281,15 @@ public class MainActivity extends Activity implements
             }
         });
 
-        // Sets selector boundary Radius
-        final TextView thumbBoundarySize = (TextView) findViewById(R.id.thumbBoundarySize);
-        SeekBar thumbBoundarySeek = (SeekBar) findViewById(R.id.thumbBoundarySeek);
+        // Sets Thumb boundary Radius
+        final TextView thumbBoundarySize = findViewById(R.id.thumbBoundarySize);
+        SeekBar thumbBoundarySeek = findViewById(R.id.thumbBoundarySeek);
         thumbBoundarySeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar thumbRadiusSeek, int progress, boolean fromUser) {
 
-                rangebar.setSelectorBoundarySize(convertDpToPixel(progress, MainActivity.this));
-                thumbBoundarySize.setText(String.format("Selector Boundary Size = %ddp", progress));
+                rangebar.setThumbBoundarySize(convertDpToPixel(progress, MainActivity.this));
+                thumbBoundarySize.setText(String.format("Thumb Boundary Size = %ddp", progress));
             }
 
             @Override
@@ -327,17 +350,17 @@ public class MainActivity extends Activity implements
                 initColorPicker(Component.TICK_COLOR, mTickColor, mTickColor);
             }
         });
-        // Sets selectorColor
-        selectorColor.setOnClickListener(new View.OnClickListener() {
+        // Sets thumbColor
+        thumbColor.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                initColorPicker(Component.SELECTOR_COLOR, mSelectorColor, mSelectorColor);
+                initColorPicker(Component.THUMB_COLOR, mThumbColor, mThumbColor);
             }
         });
 
-        selectorBoundaryColor.setOnClickListener(new View.OnClickListener() {
+        thumbBoundaryColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initColorPicker(Component.SELECTOR_BOUNDARY_COLOR, mSelectorBoundaryColor, mSelectorBoundaryColor);
+                initColorPicker(Component.THUMB_BOUNDARY_COLOR, mThumbBoundaryColor, mThumbBoundaryColor);
             }
         });
 
@@ -382,7 +405,7 @@ public class MainActivity extends Activity implements
             }
         });
 
-        findViewById(R.id.selectorRecyclerView).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.thumbRecyclerView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, RecyclerViewActivity.class));
@@ -407,14 +430,14 @@ public class MainActivity extends Activity implements
             case BAR_COLOR:
                 mBarColor = newColor;
                 rangebar.setBarColor(newColor);
-                final TextView barColorText = (TextView) findViewById(R.id.barColor);
+                final TextView barColorText = findViewById(R.id.barColor);
                 barColorText.setText("barColor = " + hexColor);
                 barColorText.setTextColor(newColor);
                 break;
             case TEXT_COLOR:
                 mTextColor = newColor;
                 rangebar.setPinTextColor(newColor);
-                final TextView textColorText = (TextView) findViewById(R.id.textColor);
+                final TextView textColorText = findViewById(R.id.textColor);
                 textColorText.setText("textColor = " + hexColor);
                 textColorText.setTextColor(newColor);
                 break;
@@ -422,7 +445,7 @@ public class MainActivity extends Activity implements
             case CONNECTING_LINE_COLOR:
                 mConnectingLineColor = newColor;
                 rangebar.setConnectingLineColor(newColor);
-                final TextView connectingLineColorText = (TextView) findViewById(
+                final TextView connectingLineColorText = findViewById(
                         R.id.connectingLineColor);
                 connectingLineColorText.setText("connectingLineColor = " + hexColor);
                 connectingLineColorText.setTextColor(newColor);
@@ -431,30 +454,30 @@ public class MainActivity extends Activity implements
             case PIN_COLOR:
                 mPinColor = newColor;
                 rangebar.setPinColor(newColor);
-                final TextView pinColorText = (TextView) findViewById(R.id.pinColor);
+                final TextView pinColorText = findViewById(R.id.pinColor);
                 pinColorText.setText("pinColor = " + hexColor);
                 pinColorText.setTextColor(newColor);
                 break;
             case TICK_COLOR:
                 mTickColor = newColor;
                 rangebar.setTickDefaultColor(newColor);
-                final TextView tickColorText = (TextView) findViewById(R.id.tickColor);
+                final TextView tickColorText = findViewById(R.id.tickColor);
                 tickColorText.setText("tickColor = " + hexColor);
                 tickColorText.setTextColor(newColor);
                 break;
-            case SELECTOR_COLOR:
-                mSelectorColor = newColor;
-                rangebar.setSelectorColor(newColor);
-                final TextView selectorColorText = (TextView) findViewById(R.id.selectorColor);
-                selectorColorText.setText("selectorColor = " + hexColor);
-                selectorColorText.setTextColor(newColor);
+            case THUMB_COLOR:
+                mThumbColor = newColor;
+                rangebar.setThumbColor(newColor);
+                final TextView thumbColorText = findViewById(R.id.thumbColor);
+                thumbColorText.setText("Thumb Color = " + hexColor);
+                thumbColorText.setTextColor(newColor);
                 break;
-            case SELECTOR_BOUNDARY_COLOR:
-                mSelectorBoundaryColor = newColor;
-                rangebar.setSelectorBoundaryColor(newColor);
-                final TextView selectorBoundaryColorText = (TextView) findViewById(R.id.selectorBoundaryColor);
-                selectorBoundaryColorText.setText("Selector Boundary Color = " + hexColor);
-                selectorBoundaryColorText.setTextColor(newColor);
+            case THUMB_BOUNDARY_COLOR:
+                mThumbBoundaryColor = newColor;
+                rangebar.setThumbBoundaryColor(newColor);
+                final TextView thumbBoundaryColorText = findViewById(R.id.thumbBoundaryColor);
+                thumbBoundaryColorText.setText("Thumb Boundary Color = " + hexColor);
+                thumbBoundaryColorText.setTextColor(newColor);
                 break;
             case TICK_LABEL_COLOR:
                 mTickLabelColor = newColor;
