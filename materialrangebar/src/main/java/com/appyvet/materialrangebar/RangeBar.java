@@ -160,6 +160,8 @@ public class RangeBar extends View {
 
     private float mBottomLabelMarginTop = 0;
 
+    private float mMarginHorizontal = 0;
+
     private CharSequence[] mTickBottomLabels;
 
     private CharSequence[] mTickTopLabels;
@@ -455,7 +457,8 @@ public class RangeBar extends View {
                 mThumbColorRight, mThumbBoundaryColor, mThumbBoundarySize, mMinPinFont, mMaxPinFont, mArePinsTemporary);
 
         // Create the underlying bar.
-        final float marginLeft = Math.max(mExpandedPinRadius, mThumbSize);
+        final float marginLeft =
+                mMarginHorizontal == 0 ? Math.max(mExpandedPinRadius, mThumbSize) : mMarginHorizontal;
 
         final float barLength = w - (2 * marginLeft);
 
@@ -1501,6 +1504,9 @@ public class RangeBar extends View {
             mFontFamily = ta.getResourceId(R.styleable.RangeBar_mrb_fontFamily, 0);
 
             mBottomLabelMarginTop = ta.getDimension(R.styleable.RangeBar_mrb_bottomLabel_marginTop, 0f);
+
+            mMarginHorizontal = ta.getDimension(R.styleable.RangeBar_mrb_marginHorizontal, 0f);
+
         } finally {
             ta.recycle();
         }
@@ -1585,7 +1591,7 @@ public class RangeBar extends View {
      * @return float marginLeft
      */
     private float getMarginLeft() {
-        return Math.max(mExpandedPinRadius, mThumbSize);
+        return mMarginHorizontal == 0 ? Math.max(mExpandedPinRadius, mThumbSize) : mMarginHorizontal;
     }
 
     /**

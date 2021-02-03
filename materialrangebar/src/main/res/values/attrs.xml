@@ -15,7 +15,7 @@
         <attr name="mrb_tickLabelSize" format="dimension" />
         <attr name="mrb_barWeight" format="dimension" />
         <attr name="mrb_rangeBarColor" format="reference|color" />
-        <attr name="mrb_minThumbDistance" format="float"/>
+        <attr name="mrb_minThumbDistance" format="float" />
         <attr name="mrb_thumbSize" format="dimension" />
         <attr name="mrb_thumbBoundaryColor" format="reference|color" />
         <attr name="mrb_thumbBoundarySize" format="dimension" />
@@ -38,6 +38,7 @@
         <attr name="mrb_onlyOnDrag" format="boolean" />
         <attr name="mrb_fontFamily" format="reference" />
         <attr name="mrb_bottomLabel_marginTop" format="dimension" />
+        <attr name="mrb_marginHorizontal" format="dimension" />
     </declare-styleable>
 
 </resources>
